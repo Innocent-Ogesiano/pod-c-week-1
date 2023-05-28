@@ -1,7 +1,10 @@
 package org.java.models;
 
+import org.java.enums.Category;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Company {
     private final String companyName;
@@ -44,13 +47,19 @@ public class Company {
         return companyName;
     }
 
+    public List<Product> getProductsByCategory(Category category) {
+        return getStore().stream()
+                .filter(product -> product.getCategory().equals(category))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public String toString() {
         return "Company{" +
                 "companyName='" + companyName + '\'' +
-                ", employees=" + employees +
-                ", store=" + store +
-                ", customers=" + customers +
+                ",\nemployees=" + employees +
+                ",\nstore=" + store +
+                ",\ncustomers=" + customers +
                 '}';
     }
 }

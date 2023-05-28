@@ -1,5 +1,11 @@
-package org.java.servicesImpl;
+package org.java.services_impl;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.java.dtos.ProductDto;
+import org.java.enums.Category;
 import org.java.enums.Gender;
 import org.java.enums.Roles;
 import org.java.models.Company;
@@ -7,6 +13,8 @@ import org.java.models.Employee;
 import org.java.models.Product;
 import org.java.services.ManagerService;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class ManagerServiceImpl implements ManagerService {
@@ -17,26 +25,51 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public String addProductToStock(
-            String productName, Double productPrice, Integer quantity, Employee employee
-    ) {
+    public String loadProductsInStore(String filePath, Employee employee) {
+        try (FileInputStream fileInputStream = new FileInputStream(filePath);
+             Workbook workBook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workBook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() > 0) {
+                    int id = (int) row.getCell(0).getNumericCellValue();
+                    String productName = row.getCell(1).getStringCellValue();
+                    double price = row.getCell(2).getNumericCellValue();
+                    int quantity = (int) row.getCell(3).getNumericCellValue();
+                    String category = row.getCell(4).getStringCellValue();
+                    ProductDto productDto = new ProductDto(id, productName, price, quantity, Category.valueOf(category));
+                    addProductToStock(productDto, employee);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+        return "Products successfully loaded to store";
+    }
+
+    @Override
+    public String addProductToStock(ProductDto productDto, Employee employee) {
         String returnValue;
         if (employee.getRole().equals(Roles.MANAGER)) {
             List<Product> productList = company.getStore();
             Product newProduct = null;
             for (Product product : productList) {
-                if (product.getName().equalsIgnoreCase(productName)) {
+                if (product.getName().equalsIgnoreCase(productDto.getName())) {
                     newProduct = product;
                     break;
                 }
             }
             if (newProduct != null) {
                 productList.remove(newProduct);
-                newProduct.setPrice(productPrice);
-                newProduct.setQuantity(newProduct.getQuantity() + quantity);
+                newProduct.setPrice(productDto.getPrice());
+                newProduct.setQuantity(newProduct.getQuantity() + productDto.getQuantity());
+                System.out.println("Product successfully updated");
                 returnValue = "Product successfully updated";
             } else {
-                newProduct = new Product(productList.size() + 1, productName, productPrice, quantity);
+                newProduct = new Product(
+                        productDto.getId(), productDto.getName(), productDto.getPrice(),
+                        productDto.getQuantity(), productDto.getCategory());
+                System.out.println("new product successfully added");
                 returnValue = "new product successfully added";
             }
             productList.add(newProduct);

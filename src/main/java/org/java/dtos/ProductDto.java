@@ -1,30 +1,44 @@
-package org.java.models;
+package org.java.dtos;
 
 import org.java.enums.Category;
+import org.java.models.Product;
 
-import java.util.Objects;
-
-public class Product {
-    private Integer productId;
+public class ProductDto {
+    private Integer id;
     private String name;
     private Double price;
     private Integer quantity;
     private Category category;
 
-    public Product(Integer productId, String name, Double price, Integer quantity, Category category) {
-        this.productId = productId;
+    public ProductDto(Integer id, String name, Double price, Integer quantity, Category category) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.category = category;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public ProductDto(String name, Double price, Integer quantity, Category category) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public ProductDto(Product product, Integer quantity) {
+        this.id = product.getProductId();
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.quantity = quantity;
+        this.category = product.getCategory();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -60,25 +74,13 @@ public class Product {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Product product)) return false;
-        return getProductId().equals(product.getProductId()) && getName().equals(product.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getProductId(), getName());
-    }
-
-    @Override
     public String toString() {
-        return "Product{" +
-                "productId=" + productId +
+        return "ProductDto{" +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", category=" + category +
-                "}\n";
+                '}';
     }
 }
