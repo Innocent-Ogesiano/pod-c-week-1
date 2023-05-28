@@ -27,6 +27,7 @@ public class CashierServicesImpl implements CashierServices {
                     .sum();
             if (customer.getWalletBalance() >= totalPrice) {
                 customer.setWalletBalance(customer.getWalletBalance() - totalPrice);
+                company.setCompanyBalance(company.getCompanyBalance() + totalPrice);
                 List<Product> productsInStore = company.getStore();
                 productsInCart.forEach(productDto -> productsInStore.stream()
                                 .filter(product -> product.getName().equals(productDto.getName()))

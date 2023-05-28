@@ -36,9 +36,14 @@ class CashierServicesImplTest {
     void sellProductToCustomer() {
         assertEquals(4, company.getStore().get(1).getQuantity());
         assertEquals(1, customer.getCart().size());
+        assertEquals(1000000, customer.getWalletBalance());
+        assertEquals(0, company.getCompanyBalance());
+
         String value = cashierServices.sellProductToCustomer(customer, cashier);
         assertNotNull(value);
         assertEquals(0, customer.getCart().size());
         assertEquals(0, company.getStore().get(1).getQuantity());
+        assertEquals(200000, customer.getWalletBalance());
+        assertEquals(800000, company.getCompanyBalance());
     }
 }

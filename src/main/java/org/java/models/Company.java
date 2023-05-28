@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class Company {
     private final String companyName;
+    private double companyBalance;
     private List<Employee> employees;
     private List<Product> store;
     private List<Customer> customers;
@@ -17,6 +18,14 @@ public class Company {
         this.store = new ArrayList<>();
         this.customers = new ArrayList<>();
         this.companyName = companyName;
+    }
+
+    public double getCompanyBalance() {
+        return companyBalance;
+    }
+
+    public void setCompanyBalance(double companyBalance) {
+        this.companyBalance = companyBalance;
     }
 
     public List<Employee> getEmployees() {
